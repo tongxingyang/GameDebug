@@ -49,23 +49,23 @@ namespace GameDebug
         {
             string str = DateTime.Now.ToString("HH:mm:ss.fff") + " ";
             StringBuffer.Length = 0;
+            StringBuffer.Append("===============================================================================");
+            Internal_Log(StringBuffer, LogColor.Black);
+            StringBuffer.Length = 0;
+            StringBuffer.Append("====================================GameDebug===================================");
+            Internal_Log(StringBuffer, LogColor.Black);
+            StringBuffer.Length = 0;
+            StringBuffer.Append("===============================================================================");
+            Internal_Log(StringBuffer, LogColor.Black);
+            StringBuffer.Length = 0;
+            StringBuffer.Append("Time:\t" + str+"");
+            Internal_Log(StringBuffer, LogColor.Black);
+            StringBuffer.Length = 0;
+            StringBuffer.Append("Path:\t" + LogFileDir+"");
+            Internal_Log(StringBuffer, LogColor.Black);
+            StringBuffer.Length = 0;
             StringBuffer.Append("================================================================================");
-            Internal_Log(StringBuffer, LogColor.White);
-            StringBuffer.Length = 0;
-            StringBuffer.Append("                                     GameDebug                                  ");
-            Internal_Log(StringBuffer, LogColor.White);
-            StringBuffer.Length = 0;
-            StringBuffer.Append("--------------------------------------------------------------------------------");
-            Internal_Log(StringBuffer, LogColor.White);
-            StringBuffer.Length = 0;
-            StringBuffer.Append("Time:\t" + str);
-            Internal_Log(StringBuffer, LogColor.White);
-            StringBuffer.Length = 0;
-            StringBuffer.Append("Path:\t" + LogFileDir);
-            Internal_Log(StringBuffer, LogColor.White);
-            StringBuffer.Length = 0;
-            StringBuffer.Append("================================================================================");
-            Internal_Log(StringBuffer, LogColor.White);
+            Internal_Log(StringBuffer, LogColor.Black);
         }
 
         private static void InitColor()
@@ -77,6 +77,7 @@ namespace GameDebug
             Colors.Add(LogColor.Yellow, "FFFF00");
             Colors.Add(LogColor.Purple, "CC6699");
             Colors.Add(LogColor.Orange, "FF9933");
+            Colors.Add(LogColor.Black, "000000");
         }
 
         private static void Internal_Log(StringBuilder stringBuilder, LogColor logColor = LogColor.White)
@@ -84,23 +85,23 @@ namespace GameDebug
             
             if (EnableShowTime)
             {
-                stringBuilder.Insert(0, DateTime.Now.ToString("HH:mm:ss.fff") + "  ");
+                stringBuilder.Insert(0, DateTime.Now.ToString("HH:mm:ss.fff") + " ");
             }
-
+          
+            if (EnableShowTimeStick)
+            {
+                if (Thread.CurrentThread.ManagedThreadId == MainThreadID)
+                    stringBuilder.Append("  (at Frame: ").Append(Time.frameCount).Append(" sec: ").Append(Time.realtimeSinceStartup.ToString("F3")).Append(" ) ");
+                else if (string.IsNullOrEmpty(Thread.CurrentThread.Name))
+                    stringBuilder.Append("  (from anonymous thread ").Append(" with id ").Append(Thread.CurrentThread.ManagedThreadId).Append(" ) ");
+                else
+                    stringBuilder.Append("  (from thread ").Append(Thread.CurrentThread.Name).Append(" with id ").Append(Thread.CurrentThread.ManagedThreadId).Append(" ) ");
+            }
+            
             if (CurrentConsole is UnityDebugConsole && EnableLogColor)
             {
                 stringBuilder.Insert(0, $"<color=#{Colors[logColor]}>");
                 stringBuilder.Append("</color>");
-            }
-
-            if (EnableShowTimeStick)
-            {
-                if (Thread.CurrentThread.ManagedThreadId == MainThreadID)
-                    stringBuilder.Append(" (at Frame: ").Append(Time.frameCount).Append(" sec: ").Append(Time.realtimeSinceStartup.ToString("F3")).Append(" ) ");
-                else if (string.IsNullOrEmpty(Thread.CurrentThread.Name))
-                    stringBuilder.Append(" (from anonymous thread ").Append(" with id ").Append(Thread.CurrentThread.ManagedThreadId).Append(" ) ");
-                else
-                    stringBuilder.Append(" (from thread ").Append(Thread.CurrentThread.Name).Append(" with id ").Append(Thread.CurrentThread.ManagedThreadId).Append(" ) ");
             }
             
             if (CurrentConsole != null)

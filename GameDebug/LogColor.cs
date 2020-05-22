@@ -9,5 +9,6 @@
         Green,
         Purple,
         Orange,
+        Black,
     }
 }
